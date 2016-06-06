@@ -1,1 +1,5 @@
-b
+#!/usr/bin/env ruby
+
+require 'rbtm'
+
+Rbtm.main(ARGV)

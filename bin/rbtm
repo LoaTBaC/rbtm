@@ -1,5 +1,123 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
 require 'rbtm'
 
-Rbtm.main(ARGV)
+help = <<HELP
+Commands include:
+  rule:     automatically generates a rule file
+  tm:       simulates a Turing machine
+  vr:       checks if a rule file is valid
+See 'rbtm COMMAND --help for more information on a specific command.
+HELP
+
+rule = <<RULE
+Generates a rule file FILE.
+RULE
+
+tm = <<TM
+Simulates a Turing machine using rule file RULE and tape TAPE, optionally with an animation.
+TM
+
+vr = <<VR
+Checks if a rule file FILE is a valid ruleset.
+VR
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: rbtm [options] [subcommand [options]]'
+  opts.separator ''
+  opts.separator help
+end.order!
+
+command = ARGV.shift.to_s.downcase
+
+subcommands = {
+  'rule' => OptionParser.new do |opts|
+    opts.banner = 'Usage: rule [options]'
+    
+    opts.on('-c', '--count NUM', 'number of rules to generate (default: 1)') do |num|
+      options[:number] = num
+    end
+    
+    opts.on('-f', '--file FILE', 'mandatory rule file') do |file|
+      options[:file] = file
+    end
+    
+    opts.on('-n', '--[no-]name', 'generate names for each rule') do |name|
+      options[:name] = name
+    end
+    
+    opts.on('-x', '--[no-]example', 'generate example bit-inversion ruleset') do |example|
+      options[:example] = example
+    end
+    
+    opts.separator ''
+    opts.separator rule
+  end,
+  'tm' => OptionParser.new do |opts|
+    opts.banner = 'Usage: tm [options]'
+    
+    opts.on('-o', '--output FILE', 'output file') do |output|
+      options[:output] = output
+    end
+    
+    opts.on('-r', '--rule RULE', 'mandatory rule file') do |rule|
+      options[:rule] = rule
+    end
+    
+    opts.on('-s', '--state STATE', "starting state (default: '0')") do |state|
+      options[:start_state] = state
+    end
+    
+    opts.on('-t', '--tape TAPE', 'mandatory tape file') do |tape|
+      options[:tape] = tape
+    end
+    
+    opts.on('-v', '--[no-]verbose', 'show animation') do |verbose|
+      options[:verbose] = verbose
+    end
+    opts.on('-z', '--sleep TIME', 'seconds to sleep (default: 0.65)') do |time|
+      options[:sleep_time] = time.to_f
+    end
+    
+    opts.separator ''
+    opts.separator tm
+  end,
+  'vr' => OptionParser.new do |opts|
+    opts.banner = 'Usage: vr [options]'
+    
+    opts.on('-f', '--file FILE', 'mandatory rule file') do |file|
+      options[:file] = file
+    end
+    
+    opts.separator ''
+    opts.separator vr
+  end
+}
+
+begin
+  
+  subcommands[command].order! unless subcommands[command].nil?
+  
+  case command
+  when 'rule'
+    raise OptionParser::MissingArgument if options[:file].nil?
+    
+    Rbtm.rule(options)
+  when 'tm'
+    raise OptionParser::MissingArgument if options[:rule].nil?
+    raise OptionParser::MissingArgument if options[:tape].nil?
+    
+    Rbtm.tm(options)
+  when 'vr'
+    raise OptionParser::MissingArgument if options[:file].nil?
+    
+    Rbtm.vr(options)
+  end
+  
+rescue OptionParser::MissingArgument
+  puts 'Missing argument.'
+  exit
+end

@@ -7,6 +7,7 @@ module Rbtm
     
     def initialize(string)
       @tape = string.to_s.split(//)
+      @tape << ' ' if @tape.empty?
       reset
     end
     

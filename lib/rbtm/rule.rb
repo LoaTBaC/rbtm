@@ -1,55 +1,42 @@
-class Rbtm
+module Rbtm
   
   ##
-  # Represents a single rule for a Turing machine.
+  # A single rule for a Turing machine.
   class Rule
-    attr_reader :state, :read, :write, :next_state
+    attr_reader :move, :name, :next_state, :read, :state, :write
     
     ##
-    # Initializes the rule.
-    def initialize(state, read, write, move, next_state)
-      check(state, read, write, move, next_state)
-      
-      @state = state
-      @read = read[0]
-      @write = write[0]
-      @move = move[0].upcase
-      @next_state = next_state
-    end
-    
-    ##
-    # Returns an Integer representation of direction.
-    def move
-      if @move == 'L'
-        -1
-      elsif @move == 'N'
-        0
-      elsif @move == 'R'
-        1
+    # Initializes the rule from a hash.
+    #
+    # Hash keys:
+    #   :move       => direction to move head ('left', 'none', or 'right')
+    #   :name       => name of rule (optional)
+    #   :next_state => next state to go to
+    #   :read       => current symbol being read from tape
+    #   :state      => current state
+    #   :write      => symbol to write to tape
+    def initialize(hash)
+      @move =
+      case hash.fetch(:move).to_s[0].downcase
+      when 'l'
+        :L
+      when 'r'
+        :R
+      else
+        :N
       end
+      
+      @name = hash.fetch(:name, '').to_s
+      @next_state = hash.fetch(:next_state).to_s
+      @read = hash[:read].to_s.empty? ? ' ' : hash[:read].to_s[0]
+      @state = hash.fetch(:state).to_s
+      @write = hash[:write].to_s.empty? ? ' ' : hash[:write].to_s[0]
     end
     
     ##
-    # Returns a readable representation of the rule in the form (state, read, write, move, next_state).
+    # Returns a string representation of the rule in the form "name: (state, read, write, move, next_state)".
     def to_s
-      "(#{@state}, #{@read}, #{@write}, #{@move}, #{@next_state})"
-    end
-    
-    private
-    
-    def check(state, read, write, move, next_state)
-      raise 'expected Integer for state' unless state.is_a?(Integer)
-      raise 'expected non-negative value for state' if state.negative?
-      raise 'expected String for read' unless read.is_a?(String)
-      raise 'expected >= 1 character for read' if read.empty?
-      raise 'expected String for write' unless write.is_a?(String)
-      raise 'expected >-= 1 character for write' if write.empty?
-      raise 'expected String for move' unless move.is_a?(String)
-      raise 'expected "L", "N", or "R" for move' unless %w(L N R).include?(
-        move[0].upcase)
-      raise 'expected Integer for next_state' unless next_state.is_a?(Integer)
-      raise 'expected non-negative value for next_state' if next_state
-        .negative?
+      "#{name}: (#{state}, #{read}, #{write}, #{move}, #{next_state})"
     end
   end
 end

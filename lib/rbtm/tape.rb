@@ -1,52 +1,84 @@
-class Rbtm
+module Rbtm
   
   ##
-  # Represents a tape for a Turing machine.
+  # A tape for a Turing machine.
   class Tape
+    attr_reader :head
     
-    ##
-    # Initializes the tape.
     def initialize(string)
-      raise 'expected String for string' unless string.is_a?(String)
-      
-      @contents = string
+      @tape = string.to_s.split(//)
+      reset
     end
     
     ##
-    # Returns the character at the given index.
-    def [](index)
-      @contents[index.to_i]
+    # Moves the head left.
+    def left
+      if @head.zero?
+        @tape.unshift(' ')
+      else
+        @head -= 1
+      end
     end
     
     ##
-    # Replaces the character at the index with the given character.
-    def []=(index, character)
-      raise 'expected String for character' unless character.is_a?(String)
-      
-      @contents[index.to_i] = character[0]
+    # Operates on the tape one time with the given rule and state.
+    def operate(rule, state)
+      if state == rule.state && read == rule.read
+        write(rule.write)
+        
+        case rule.move
+        when :L
+          left
+        when :R
+          right
+        end
+        
+        rule.next_state
+      end
     end
     
     ##
-    # Pads the tape with empty space.
-    def pad(amount)
-      @contents = (' ' * amount) + @contents + (' ' * amount)
+    # Returns the value being read at the head's position.
+    def read
+      @tape[@head]
     end
     
     ##
-    # Returns the first non-blank index of the tape.
+    # Resets the position of the head.
+    def reset
+      @head = start
+    end
+    
+    ##
+    # Moves the head right.
+    def right
+      @head += 1
+      @tape.push(' ') if @head == @tape.size
+    end
+    
+    ##
+    # Returns an unstripped string of the tape.
+    def tape_string
+      @tape.join
+    end
+    
+    def to_s
+      tape_string.strip
+    end
+    
+    ##
+    # Writes the given value to the head's position.
+    def write(value)
+      @tape[@head] = value.to_s.empty? ? ' ' : value.to_s[0]
+    end
+    
+    private
+    
     def start
       index = 0
+      index += 1 until @tape[index] != ' '
       
-      index += 1 until @contents[index] != ' '
-      
-      return nil if @contents[index] == nil
-      index
-    end
-    
-    ##
-    # Returns the contents of the tape.
-    def to_s
-      @contents
+      @tape[index].nil? ? 0 : index
     end
   end
 end

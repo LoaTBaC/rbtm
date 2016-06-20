@@ -1,277 +1,186 @@
-##
-# Holds everything.
-class Rbtm
+module Rbtm
   
   ##
-  # Picks subprogram to run.
-  def self.main(args)
-    system('clear')
-    puts '-' * 80
-    puts
-    
-    if args.empty?
-      list
-    elsif args[0].downcase == 'help'
-      if args.size == 1
-        list
+  # rule subcommand.
+  def self.rule(options)
+    intro('RULE: rule generator') do
+      file = options[:file]
+      num = options[:number].to_i.positive? ? options[:number].to_i : 1
+      
+      if options[:example]
+        rules = [
+          {
+            name: 'flop0', state: '0', read: '0', write: '1', move: 'right',
+            next_state: '0'
+          },
+          {
+            name: 'flop1', state: '0', read: '1', write: '0', move: 'right',
+            next_state: '0'
+          }
+        ]
       else
-        help(args.drop(1))
+        rules = generate_rules(num)
       end
-    elsif args[0].downcase == 'list'
-      list
-    elsif args[0].downcase == 'rule'
-      rule(args.drop(1))
-    elsif args[0].downcase == 'tm'
-      tm(args.drop(1))
-    elsif args[0].downcase == 'vr'
-      vr(args.drop(1))
-    else
-      puts 'Unrecognized command. Try $ rbtm for a list of commands.'
+      
+      json = encode_rules(rules)
+      
+      write(file, json)
     end
-    
-    puts
-    puts '-' * 80
+  end
+  
+  ##
+  # tm subcommand.
+  def self.tm(options)
+    intro('TM: Turing machine') do
+      output = options[:output]
+      rule = File.read(options[:rule])
+      tape = File.read(options[:tape]).strip
+      
+      done = simulate(rule, tape, options)
+      
+      if output
+        puts
+        write(output, done)
+      end
+    end
+  end
+  
+  ##
+  # vr subcommand.
+  def self.vr(options)
+    intro('VR: validate rules') do
+      file = File.read(options[:file])
+      
+      validate(file)
+    end
   end
   
   private
   
   def self.abort(reason = '')
-    puts reason
-    puts 'Aborting!'
+    puts reason unless reason.empty?
     puts
     puts '-' * 80
     exit
   end
   
-  def self.help(args)
-    puts 'RBTM v1.1 - HELP: command help'
-    puts '-' * 80
-    puts
+  def self.animate(arrays, sleep_time)
+    system('clear')
     
-    if args[0].downcase == 'help'
-      puts 'Usage: rbtm help [command]'
-      puts
-      puts 'Summary:'
-      puts "\tShows help on COMMAND"
-      puts
-      puts 'Description:'
-      puts "\tShows advanced help for COMMAND. If no COMMAND is given, shows" +
-        ' a list'
-      puts "\tof all commands instead."
-    elsif args[0].downcase == 'list'
-      puts 'Usage: rbtm list'
-      puts
-      puts 'Summary:'
-      puts "\tLists all commands"
-      puts
-      puts 'Description:'
-      puts "\tLists all commands. Gives a list of arguments and a short" +
-        ' description.'
-    elsif args[0].downcase == 'rule'
-      puts 'Usage: rbtm rule <file> <number>'
-      puts
-      puts 'Summary:'
-      puts "\tGenerates a file containing NUMBER rules"
-      puts
-      puts 'Description:'
-      puts "\tGenerates a file containing NUMBER blank rules in the proper"
-      puts "\tformat."
-      puts
-      puts "\tEach rule has the following compoents:"
-      puts
-      puts "\t\tstate\t\t: current state (non-negative Integer)"
-      puts "\t\tread\t\t: character being read"
-      puts "\t\twrite\t\t: character to write"
-      puts "\t\tmove\t\t: direction to move next ('L', 'N', or 'R',"
-      puts "\t\t\t\t  meaning left, none, or right, respectively)"
-      puts "\t\tnext_state\t: next state (non-negative Integer)"
-      puts
-      puts "\tEach rule is in the following format:"
-      puts
-      puts "\t["
-      puts "\t\t{"
-      puts "\t\t\t\"state\": 0,"
-      puts "\t\t\t\"read\": \"0\","
-      puts "\t\t\t\"write\": \"1\","
-      puts "\t\t\t\"move\": \"R\","
-      puts "\t\t\t\"next_state\": 0"
-      puts "\t\t}"
-      puts "\t]"
-      puts
-      puts "\tA rule file may have multiple rules chained together within" +
-        " the square"
-      puts "\tbrackets, separated by commas."
-    elsif args[0].downcase == 'tm'
-      puts 'Usage: rbtm tm <tape> <ruleset> [output]'
-      puts
-      puts 'Summary:'
-      puts "\tRuns a Turing machine with TAPE and RULE, optionally saving to" +
-        " OUTPUT"
-      puts
-      puts 'Description:'
-      puts "\tRuns a Turing machine with a text file TAPE and JSON file RULE,"
-      puts "\toptionally saving output to OUTPUT."
-    elsif args[0].downcase == 'vr'
-      puts 'Usage: rbtm vr <file>'
-      puts
-      puts 'Summary:'
-      puts "\tChecks if FILE is a valid ruleset"
-      puts
-      puts 'Description:'
-      puts "\tChecks if a JSON file FILE is a valid ruleset."
-    else
-      puts 'Unrecogized command. Try $ rbtm for a list of commands.'
+    arrays.each do |d|
+      puts "#{' ' * d.tape_head}v:#{d.state}"
+      puts d.tape_string
+      puts d.rule_name
+      
+      sleep(sleep_time)
+      
+      system('clear')
     end
   end
   
-  def self.list
-    puts 'RBTM v1.1 - LIST: list of commands'
-    puts '-' * 80
-    puts
-    
-    puts "\trbtm help [command]\t\tshow help on COMMAND"
-    puts "\trbtm list\t\t\tthis list"
-    puts "\trbtm rule <file> <number>\tgenerate FILE containing NUMBER rules"
-    puts "\trbtm tm <tape> <rule> [output]\trun Turing machine with TAPE" +
-      ' and RULE,'
-    puts "\t\t\t\t\toptionally saving to OUTPUT"
-    puts "\trbtm vr <file>\t\t\tcheck if FILE is a valid ruleset"
-  end
-  
-  def self.rule(args)
+  def self.encode_rules(rules)
     require 'json'
     
-    puts 'RBTM v1.1 - RULE: rule generator'
+    JSON.generate(rules, indent: "\t", object_nl: "\n", array_nl: "\n")
+  end
+  
+  def self.generate_rules(num)
+    contents = []
+    
+    num.times do
+      contents << {
+        name: '', state: '0', read: '0', write: '0', move: 'none', next_state: '0'
+      }
+    end
+    
+    contents
+  end
+  
+  def self.intro(title, &block)
+    system('clear')
+    puts '-' * 80
+    
+    print "RBTM v#{Gem.loaded_specs['rbtm'].version} - "
+    puts title
     puts '-' * 80
     puts
     
-    abort('Wrong number of arguments.') unless args.size >= 2
+    self.run(block)
     
-    file = args.shift
-    number = args.shift
+    abort
+  end
+  
+  def self.load_rules(text)
+    require 'json'
     
-    if File.exists?(file)
-      puts "#{file} already exists. Do you wish to overwrite it?"
-      abort unless $stdin.gets.downcase.start_with?('y')
-      puts
+    json = JSON.parse(text, :symbolize_names => true)
+    rules = []
+    
+    json.each { |r| rules << Rule.new(r) }
+    
+    rules
+  end
+  
+  def self.run(block)
+    block.call
+  rescue Errno::ENOENT
+    puts 'Invalid file.'
+  end
+  
+  def self.simulate(rule, tape, options)
+    rules = validate(rule)
+    start_state = options[:start_state]
+    sleep_time = options[:sleep_time] || 0.65
+    
+    tm = TM.new
+    tm.rules = rules
+    tm.tape = Tape.new(tape)
+    puts
+    
+    array = start_state.nil? ? tm.operate : tm.operate(start_state)
+    
+    if options[:verbose]
+      animate(array, sleep_time)
     end
     
-    begin
-      number = number.to_i
-    rescue
-      abort('Invalid number.')
+    puts 'INPUT:'
+    puts array[0].tape_string
+    puts
+    
+    puts 'OUTPUT:'
+    puts array[-1].tape_string
+    
+    tm.tape.to_s
+  end
+  
+  def self.validate(text)
+    puts 'Parsing ruleset...'
+    
+    rules = load_rules(text)
+  rescue => e
+    puts e
+    abort('Invalid ruleset.')
+  else
+    rules.each { |r| puts "\t" + r.to_s }
+    puts
+    puts 'Valid ruleset.'
+    
+    rules
+  end
+  
+  def self.write(file, contents)
+    if File.exists?(file)
+      print "#{file} already exists. Do you wish to overwrite it? (y/n) "
+      abort unless $stdin.gets.downcase.start_with?('y')
     end
     
     puts 'Writing file.'
     
-    File.open(file, 'w') do |f|
-      contents = []
-      
-      number.times do
-        contents << {state: 0, read: '0', write: '0', move: 'N', next_state: 0}
-      end
-      
-      contents = JSON.generate(contents, :indent => "\t", :object_nl => "\n",
-        :array_nl => "\n")
-        
-      f.write(contents)
-    end
-  end
-  
-  def self.tm(args)
-    require 'json'
-    
-    puts 'RBTM v1.1 - TM: Turing machine'
-    puts '-' * 80
-    puts
-    
-    abort('Wrong number of arguments.') unless args.size >= 2
-    
-    tape = args.shift
-    rule = args.shift
-    output = args.shift
-    abort('Tape does not exist.') unless File.exist?(tape)
-    abort('Ruleset does not exist.') unless File.exist?(rule)
-    
-    tp = File.read(tape).chomp
-    rl = File.read(rule)
-    puts 'Parsing ruleset...'
-    
-    json = JSON.parse(rl, :symbolize_names => true)
-    rules = []
-    json.each do |r|
-      st = r[:state]
-      rd = r[:read]
-      wr = r[:write]
-      mv = r[:move]
-      ns = r[:next_state]
-      
-      rules << Rbtm::Rule.new(st, rd, wr, mv, ns)
-    end
-    
-    tape = Rbtm::Tape.new(tp).pad(4)
-    
-    puts
-    puts 'INPUT:'
-    puts '"' + tape.to_s + '"'
-    puts
-    
-    Rbtm::TM.run(tape, rules)
-    
-    puts 'OUTPUT:'
-    puts '"' + tape.to_s + '"'
-    
-    unless output.nil?
-      if File.exists?(output)
-        puts
-        puts "#{output} already exists. Do you wish to overwrite it?"
-        abort unless $stdin.gets.downcase.start_with?('y')
-      end
-      
-      puts
-      puts 'Writing file.'
-      
-      File.open(output, 'w') { |o| o.write(tape.to_s) }
-    end
-  end
-  
-  def self.vr(args)
-    require 'json'
-    
-    puts 'RBTM v1.1 - VR: validate rules'
-    puts '-' * 80
-    puts
-    
-    abort('Wrong number of arguments.') unless args.size >= 1
-    
-    file = args.shift
-    abort('File does not exist.') unless File.exist?(file)
-    
-    f = File.read(file)
-    puts 'Parsing ruleset...'
-    
-    begin
-      json = JSON.parse(file, :symbolize_names => true)
-      
-      json.each do |r|
-        state = r[:state]
-        read = r[:read]
-        write = r[:write]
-        move = r[:move]
-        next_state = r[:next_state]
-        
-        puts "\t" + Rbtm::Rule.new(state, read, write, move, next_state).to_s
-      end
-    rescue
-      puts
-      puts 'Invalid ruleset.'
-    else
-      puts
-      puts 'Valid ruleset.'
-    end
+    File.open(file, 'w') { |f| f.write(contents) }
   end
 end
 
+require 'rbtm/data'
 require 'rbtm/rule'
 require 'rbtm/tape'
 require 'rbtm/tm'

@@ -6,20 +6,32 @@ module Rbtm
     intro('RULE: rule generator') do
       file = options[:file]
       num = options[:number].to_i.positive? ? options[:number].to_i : 1
+      names = options[:name]
       
       if options[:example]
-        rules = [
-          {
-            name: 'flop0', state: '0', read: '0', write: '1', move: 'right',
-            next_state: '0'
-          },
-          {
-            name: 'flop1', state: '0', read: '1', write: '0', move: 'right',
-            next_state: '0'
-          }
-        ]
+        if names
+          rules = [
+            {
+              name: 'flop0', state: '0', read: '0', write: '1', move: 'right',
+              next_state: '0'
+            },
+            {
+              name: 'flop1', state: '0', read: '1', write: '0', move: 'right',
+              next_state: '0'
+            }
+          ]
+        else
+          rules = [
+            {
+              state: '0', read: '0', write: '1', move: 'right', next_state: '0'
+            },
+            {
+              state: '0', read: '1', write: '0', move: 'right', next_state: '0'
+            }
+          ]
+        end
       else
-        rules = generate_rules(num)
+        rules = generate_rules(num, names)
       end
       
       json = encode_rules(rules)
@@ -84,13 +96,22 @@ module Rbtm
     JSON.generate(rules, indent: "\t", object_nl: "\n", array_nl: "\n")
   end
   
-  def self.generate_rules(num)
+  def self.generate_rules(num, generate_names)
     contents = []
     
-    num.times do
-      contents << {
-        name: '', state: '0', read: '0', write: '0', move: 'none', next_state: '0'
-      }
+    if generate_names
+      num.times do
+        contents << {
+          name: '', state: '0', read: '0', write: '0', move: 'none',
+          next_state: '0'
+        }
+      end
+    else
+      num.times do
+        contents << {
+          state: '0', read: '0', write: '0', move: 'none', next_state: '0'
+        }
+      end
     end
     
     contents

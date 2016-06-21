@@ -194,7 +194,7 @@ There *should* be at most one rule for each state and symbol being read, as othe
 It would be horribly wasteful and pointless to bother simulating an "infinite" tape for this simple Turing machine. This one is *practically* infinite, as whenever the head moves beyond the edge of the tape, it will add new blank cells as necessary.
 
 ## Example rulesets
-For easy usage, I have included some example rulesets to try out. See the example folder for the actual files. These are not original rulesets, and they are by no means the only ones you could use. Many of these came from [https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/turing-machine/four.html](here).
+For easy usage, I have included some example rulesets to try out. See the example folder for the actual files. These are not original rulesets, and they are by no means the only ones you could use. Many of these came from [here](https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/turing-machine/four.html).
 
 ### binary_increment
 Increments a binary number on the tape by one (the left is the least-significant bit).
@@ -203,10 +203,10 @@ Increments a binary number on the tape by one (the left is the least-significant
 Subtracts one unary (base-1) number from another. In unary, the value is equal to the number of 1s, so '111111' means 6 and '11' means 2. There should be two unary numbers separated by a single blank cell.
 
 ### 3_busy_beaver
-A 3 state "busy beaver" program. See the [https://en.m.wikipedia.org/wiki/Busy_beaver](wikipedia page) for more information.
+A 3 state "busy beaver" program. See the [wikipedia page](https://en.m.wikipedia.org/wiki/Busy_beaver) for more information.
 
 ### 4_busy_beaver
-A 4 state "busy beaver" program. See the [https://en.m.wikipedia.org/wiki/Busy_beaver](wikipedia page) for more information.
+A 4 state "busy beaver" program. See the [wikipedia page](https://en.m.wikipedia.org/wiki/Busy_beaver) for more information.
 
 ### palindrome
 Analyzes the tape to see if it is a palindrome. If it is, it writes a 1; otherwise, it writes a 0.

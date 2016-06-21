@@ -246,22 +246,27 @@ First, you will need to have a rule file ready. I would recommend using the *rul
 Next, you will need a tape file. This is just a text file with (or without) some symbols. Most rulesets make use of only 1, 0, and space. Try typing a bunch of 1s and 0s, like this "111010001010". Save this to a text file.
 
 Now you can run the Turing machine:
-
+```
 $ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt
+```
 
 This will show only the input and output. If you'd rather have a nice view, add the -v option to show an animation:
-
+```
 $ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -v
+```
 
 If you want to speed up or slow down the animation, you can change the time between frames with the -z option. Specify the time in seconds (default is 0.65). This is useful for speeding up the animation if there are a lot of steps. This would be *really* fast:
-
+```
 $ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -v -z 0.01
+```
 
 You can also save the final tape to an output file, like this:
-
+```
 $ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -o output.txt
+```
 
 ### vr
 This is just a simple utility to check if rbtm can load a rule file you've made. Run it like this:
-
+```
 $ rbtm vr -f my\_rule\_file.json
+```

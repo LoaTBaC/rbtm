@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'rbtm'
-  s.version = '1.4.0'
+  s.version = '1.4.3'
   s.executables << 'rbtm'
   s.date = '2016-06-20'
   s.summary = 'A Turing machine for Ruby'

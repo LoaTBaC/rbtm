@@ -8,7 +8,7 @@ Commands include:
   rule:     automatically generates a rule file
   tm:       simulates a Turing machine
   vr:       checks if a rule file is valid
-See 'rbtm COMMAND --help for more information on a specific command.
+See 'rbtm COMMAND --help' for more information on a specific command.
 HELP
 
 rule = <<RULE

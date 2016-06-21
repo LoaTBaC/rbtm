@@ -213,3 +213,55 @@ Analyzes the tape to see if it is a palindrome. If it is, it writes a 1; otherwi
 
 ### bit_invert
 You've already seen this one. It just replaces 0 with 1 and 1 with 0 until it runs into a blank.
+
+## Using rbtm from the command line
+Here is some information for using the command-line tools provided with rbtm.
+
+### rule
+This is a simple automatic rule generator. You can produce a single-rule rule file by doing this:
+```
+$ rbtm rule -f my\_rule\_file.json
+```
+
+You can add the -c option to specify the number of rules. This would produce 3 rules:
+```
+$ rbtm rule -f my\_rule\_file.json -c 3
+```
+
+If you want to generate the "name" parameter for each rule, add the -n option:
+```
+$ rbtm rule -f my\_rule\_file.json -n
+```
+
+It is easy to generate an example bit-inverting ruleset. Note that the -c option doesn't have any effect with this.
+```
+$ rbtm rule -f my\_example\_rule\_file.json -x
+```
+
+### tm
+This is the main attraction. It requires a bit more preparation to use, however.
+
+First, you will need to have a rule file ready. I would recommend using the *rule* utility to generate one. A pre-created one can be made by adding the -x option. Alternatively, you could use one of the rulesets in the example folder.
+
+Next, you will need a tape file. This is just a text file with (or without) some symbols. Most rulesets make use of only 1, 0, and space. Try typing a bunch of 1s and 0s, like this "111010001010". Save this to a text file.
+
+Now you can run the Turing machine:
+
+$ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt
+
+This will show only the input and output. If you'd rather have a nice view, add the -v option to show an animation:
+
+$ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -v
+
+If you want to speed up or slow down the animation, you can change the time between frames with the -z option. Specify the time in seconds (default is 0.65). This is useful for speeding up the animation if there are a lot of steps. This would be *really* fast:
+
+$ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -v -z 0.01
+
+You can also save the final tape to an output file, like this:
+
+$ rbtm tm -r my\_rule\_file.json -t my\_tape\_file.txt -o output.txt
+
+### vr
+This is just a simple utility to check if rbtm can load a rule file you've made. Run it like this:
+
+$ rbtm vr -f my\_rule\_file.json

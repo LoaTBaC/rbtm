@@ -38,14 +38,16 @@ Checks if a rule file FILE is a valid ruleset.
 ### Rule format
 Rules are in JSON format, and each rule looks like this:
 
-> \{ 
-> 		"name": "flop1", 
->		"state": "0", 
->		"read": "1", 
-> 		"write": "0", 
-> 		"move": "right", 
->		"next_state": "0" 
-> \}
+```json
+\{ 
+	"name": "flop1", 
+	"state": "0", 
+	"read": "1", 
+ 	"write": "0", 
+ 	"move": "right", 
+	"next_state": "0" 
+\}
+```
 
 #### Rule tags
 Every rule can have 5-6 tags inside it.

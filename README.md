@@ -82,7 +82,7 @@ This is a string representing the symbol being read by the Turing machine. If no
 This is a character representing the symbol to be written to the current position of the tape. If the rule is being used and the "state" and "read" tags match those of the Turing machine, this will be written.
 
 ##### "move"
-This specifies the direction to move the head of the tape. Strings starting with "r" or "l" will be interpreted as right and left, respectively. Anything else will be interpreted as not moving. Case does not matter.
+This specifies the direction to move the head of the tape. Strings starting with "R" or "L" will be interpreted as right and left, respectively. Anything else will be interpreted as not moving. Case does not matter.
 
 ##### "next_state"
 This represents the next state to go to. Once the rule has been applied, if it matches, the Turing machine will move into this state.

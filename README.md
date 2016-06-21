@@ -9,28 +9,28 @@ See 'rbtm COMMAND --help' for more information on a specific command.
 ### rule
 Generates a rule file FILE in JSON format.
 
-Usage: rule \[options\]
-	-c, --count **NUM**				number of rules to generate (*default: 1*)
-	-f, --file **FILE**				rule file (***REQUIRED***)
-	-n, --[no-]name					generates names for each rule
-	-x, --[no-]example				generates example bit-inversion ruleset
+> Usage: rule \[options\]
+>	-c, --count **NUM**				number of rules to generate (*default: 1*)
+>	-f, --file **FILE**				rule file (***REQUIRED***)
+>	-n, --[no-]name					generates names for each rule
+>	-x, --[no-]example				generates example bit-inversion ruleset
 
 ### tm
 Simulates a Turing machine using rule file RULE and tape TAPE, optionally with an animation.
 
-Usage: tm \[options\]
-	-o, --output **FILE**			output file
-	-r, --rule **RULE**				rule file (***REQUIRED***)
-	-s, --state **STATE**			starting state (*default: '0'*)
-	-t, --tape **TAPE**				tape file (***REQUIRED***)
-	-v, --[no-]verbose				show animation
-	-z, --sleep **TIME**			seconds to sleep between frames of animation (*default: 0.65*)
+> Usage: tm \[options\]
+>	-o, --output **FILE**			output file
+>	-r, --rule **RULE**				rule file (***REQUIRED***)
+>	-s, --state **STATE**			starting state (*default: '0'*)
+>	-t, --tape **TAPE**				tape file (***REQUIRED***)
+>	-v, --[no-]verbose				show animation
+>	-z, --sleep **TIME**			seconds to sleep between frames of animation (*default: 0.65*)
 
 ### vr
 Checks if a rule file FILE is a valid ruleset.
 
-Usage: vr \[options\]
-	-f, --file **FILE**				rule file (***REQUIRED***)
+> Usage: vr \[options\]
+>	-f, --file **FILE**				rule file (***REQUIRED***)
 
 ## How to use the Turing machine
 
@@ -38,13 +38,13 @@ Usage: vr \[options\]
 ### Rule format
 Rules are in JSON format, and each rule looks like this:
 
-> \{
-> 		"name": "flop1",
->			"state": "0",
->			"read": "1",
-> 		"write": "0",
-> 		"move": "right",
->			"next_state": "0"
+> \{ 
+> 		"name": "flop1", 
+>		"state": "0", 
+>		"read": "1", 
+> 		"write": "0", 
+> 		"move": "right", 
+>		"next_state": "0" 
 > \}
 
 #### Rule tags

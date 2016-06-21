@@ -63,7 +63,7 @@ Every rule can have 5-6 tags inside it.
 	"read"										current symbol being read by the Turing machine
 	"write"										symbol to write at current tape position
 	"move"										direction to move head
-	"next_state"							next state to go to
+	"next_state"								next state to go to
 
 The only one of these tags that can be omitted is "name". All the rest are required.
 

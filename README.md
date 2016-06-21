@@ -220,22 +220,22 @@ Here is some information for using the command-line tools provided with rbtm.
 ### rule
 This is a simple automatic rule generator. You can produce a single-rule rule file by doing this:
 ```
-$ rbtm rule -f my\_rule\_file.json
+$ rbtm rule -f my_rule_file.json
 ```
 
 You can add the -c option to specify the number of rules. This would produce 3 rules:
 ```
-$ rbtm rule -f my\_rule\_file.json -c 3
+$ rbtm rule -f my_rule_file.json -c 3
 ```
 
 If you want to generate the "name" parameter for each rule, add the -n option:
 ```
-$ rbtm rule -f my\_rule\_file.json -n
+$ rbtm rule -f my_rule_file.json -n
 ```
 
 It is easy to generate an example bit-inverting ruleset. Note that the -c option doesn't have any effect with this.
 ```
-$ rbtm rule -f my\_example\_rule\_file.json -x
+$ rbtm rule -f my_example_rule_file.json -x
 ```
 
 ### tm

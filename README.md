@@ -156,7 +156,7 @@ Here is an example of the Turing machine's operation on a small tape using the b
 ...	1	1	0   ...
 ```
 
-The Turing machine reads the symbol "1", and consults its list of rules, and sees that it has a rule that applies, the "flop1" rule: \(0, 1, 0, R, 0\). Following this rule, the Turing machine writes a 0 to the head's position, moves the head right one step, and goes into state 0 (the same state). It now looks like this:
+The Turing machine reads the symbol "1" and is in state "0", so it consults its list of rules, and sees that it has a rule that applies, the "flop1" rule: \(0, 1, 0, R, 0\). Following this rule, the Turing machine writes a 0 to the head's position, moves the head right one step, and goes into state 0 (the same state). It now looks like this:
 
 ```
 	    v - state: 0
@@ -177,7 +177,7 @@ This time it reads a 0, so it follows the "flop0" rule:
 ... 0   0   1   ...
 ```
 
-It now reads a blank. This particular ruleset has no rules that read a blank, and as there are no more rules to apply, so it stops. It has no way of knowing the contents of the rest of the tape, so if there were anything beyond the blank, they would never be reached without a rule for them. Notice that the bit-inversion rule has lived up to its name; the tape has had each symbol inverted:
+It now reads a blank. This particular ruleset has no rules that read a blank, and as there are no more rules to apply, it stops. It has no way of knowing the contents of the rest of the tape, so if there were anything beyond the blank, they would never be reached without a rule for them. Notice that the bit-inversion rule has lived up to its name; the tape has had each symbol inverted:
 
 ```
 1   1   0   =>   0   0   1

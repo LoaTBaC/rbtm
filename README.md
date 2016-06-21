@@ -9,28 +9,34 @@ See 'rbtm COMMAND --help' for more information on a specific command.
 ### rule
 Generates a rule file FILE in JSON format.
 
-> Usage: rule \[options\]
->	-c, --count **NUM**				number of rules to generate (*default: 1*)
->	-f, --file **FILE**				rule file (***REQUIRED***)
->	-n, --[no-]name					generates names for each rule
->	-x, --[no-]example				generates example bit-inversion ruleset
+Usage: rule \[options\]
+```
+	-c, --count **NUM**				number of rules to generate (*default: 1*)
+	-f, --file **FILE**				rule file (***REQUIRED***)
+	-n, --[no-]name					generates names for each rule
+	-x, --[no-]example				generates example bit-inversion ruleset
+```
 
 ### tm
 Simulates a Turing machine using rule file RULE and tape TAPE, optionally with an animation.
 
-> Usage: tm \[options\]
->	-o, --output **FILE**			output file
->	-r, --rule **RULE**				rule file (***REQUIRED***)
->	-s, --state **STATE**			starting state (*default: '0'*)
->	-t, --tape **TAPE**				tape file (***REQUIRED***)
->	-v, --[no-]verbose				show animation
->	-z, --sleep **TIME**			seconds to sleep between frames of animation (*default: 0.65*)
+Usage: tm \[options\]
+```
+	-o, --output **FILE**			output file
+	-r, --rule **RULE**				rule file (***REQUIRED***)
+	-s, --state **STATE**			starting state (*default: '0'*)
+	-t, --tape **TAPE**				tape file (***REQUIRED***)
+	-v, --[no-]verbose				show animation
+	-z, --sleep **TIME**			seconds to sleep between frames of animation (*default: 0.65*)
+```
 
 ### vr
 Checks if a rule file FILE is a valid ruleset.
 
-> Usage: vr \[options\]
->	-f, --file **FILE**				rule file (***REQUIRED***)
+Usage: vr \[options\]
+```
+	-f, --file **FILE**				rule file (***REQUIRED***)
+```
 
 ## How to use the Turing machine
 
@@ -39,14 +45,14 @@ Checks if a rule file FILE is a valid ruleset.
 Rules are in JSON format, and each rule looks like this:
 
 ```json
-\{ 
+{ 
 	"name": "flop1", 
 	"state": "0", 
 	"read": "1", 
  	"write": "0", 
  	"move": "right", 
 	"next_state": "0" 
-\}
+}
 ```
 
 #### Rule tags
@@ -82,35 +88,41 @@ This represents the next state to go to. Once the rule has been applied, if it m
 #### Rule files
 Multiple rules can be placed in one file. They must be enclosed by square brackets \[ \] and separated by commas. Here is an example two-rule file:
 
-> \[
->			\{
->					"name": "flop0",
->					"state": "0",
->					"read": "0",
->					"write": "1",
->					"move": "right",
->					"next_state": "0"
->			\},
->			\{
->					"name": "flop1",
->					"state": "0",
->					"read": "1",
->					"write": "0",
->					"move": "right",
->					"next_state": "0"
->			\}
-> \]
+```json
+[
+	{
+		"name": "flop0",
+		"state": "0",
+		"read": "0",
+		"write": "1",
+		"move": "right",
+		"next_state": "0"
+	},
+	{
+		"name": "flop1",
+		"state": "0",
+		"read": "1",
+		"write": "0",
+		"move": "right",
+		"next_state": "0"
+	}
+]
+```
 
 This is a simple bit-inversion ruleset which will change "1" to "0" and "0" to "1" until it comes to the end of the tape or a blank spot.
 
 #### Rule notation
 While there are many ways to show the contents of the rules for a Turing machine, this is the one I will be using:
 
-\( state , read , write , move , next_state \)
+```
+( state , read , write , move , next_state )
+```
 
 This means that the second rule shown in the ruleset above would be written as:
 
-\( 0 , 1 , 0 , R , 0 \)
+```
+( 0 , 1 , 0 , R , 0 )
+```
 
 ### How the Turing machine works
 A Turing machine is an abstract idea for a computer, which, while impractical, is theoretically capable of everything a normal computer can do \(just because it is capable doesn't mean it is efficient or easy to use, however\).
@@ -119,7 +131,9 @@ The Turing machine knows only its current state. It is given a collection of rul
 
 The Turing machine uses an infinite-length one-dimensional tape of symbols. You can imagine it as a collection of boxes stretching in either direction, each able to hold a single symbol.
 
-	...[ ] [1] [0] [1] [1] [1] [0] [ ] [0] [1] [ ] [0] [ ] [ ]...
+```
+...[ ] [1] [0] [1] [1] [1] [0] [ ] [0] [1] [ ] [0] [ ] [ ]...
+```
 
 While any symbol could be used in the tape, most Turing machines make use of only 1 and 0, plus a blank. Only a tiny portion of this tape is actually used, the section that is not blank.
 
@@ -135,27 +149,37 @@ The Turing machine also has a "head", which moves along the tape. It is only cap
 
 Here is an example of the Turing machine's operation on a small tape using the bit-inversion ruleset shown above. The v will indicate the position of the head over the tape, and the state will be to the right of it.
 
+```
     v - state: 0
 ...	1	1	0   ...
+```
 
 The Turing machine reads the symbol "1", and consults its list of rules, and sees that it has a rule that applies, the "flop1" rule: \(0, 1, 0, R, 0\). Following this rule, the Turing machine writes a 0 to the head's position, moves the head right one step, and goes into state 0 (the same state). It now looks like this:
 
+```
 			v - state: 0
 ... 0 1 0   ...
+```
 
 It then applies the "flop1" rule again:
 
+```
         v - state: 0
 ... 0 0 0   ...
+```
 
 This time it reads a 0, so it follows the "flop0" rule:
 
+```
           v - state: 0
 ... 0 0 1   ...
+```
 
 It now reads a blank. This particular ruleset has no rules that read a blank, and as there are no more rules to apply, so it stops. It has no way of knowing the contents of the rest of the tape, so if there were anything beyond the blank, they would never be reached without a rule for them. Notice that the bit-inversion rule has lived up to its name; the tape has had each symbol inverted:
 
+```
 1 1 0 => 0 0 1
+```
 
 This is a simple example, but many, much more advanced programs can be \(and have been\) made for Turing machines. See the examples folder for some example rulesets.
 

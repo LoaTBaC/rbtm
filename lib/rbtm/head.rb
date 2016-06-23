@@ -1,43 +1,23 @@
 module Rbtm
 
   ##
-  # The read/write head for the Turing machine.
+  # The read/write head of the Turing machine.
   class Head
-    attr_reader :state, :tape
+    attr_reader :index, :state, :tape
 
-    def initialize(tape, state)
-      @tape = tape
+    def initialize(str, state)
+      @tape = (str.empty? ? '_' : str.dup)
       @state = state
+      @index = 0
     end
 
     ##
     # Operates on the tape using the given rule.
     def operate(rule)
-      @state = rule.next_state
-      write(rule.write)
-      move(rule.direction)
-    end
+      @state = rule[0]
+      write(rule[1])
 
-    ##
-    # Returns the position on the tape.
-    def position
-      tape.position
-    end
-
-    ##
-    # Returns the signature (state and read) of the head.
-    def signature
-      [state, read]
-    end
-
-    private
-
-    def left
-      tape.left
-    end
-
-    def move(direction)
-      case direction
+      case rule[2]
       when 'L'
         left
       when 'R'
@@ -45,16 +25,39 @@ module Rbtm
       end
     end
 
+    def signature
+      [state, read]
+    end
+
+    def to_s
+      tape.sub(/^_+/, '').sub(/_+$/, '')
+    end
+
+    private
+
+    def left
+      if index.zero?
+        pad
+      else
+        @index -= 1
+      end
+    end
+
+    def pad
+      tape.insert(index, '_')
+    end
+
     def read
-      tape.read
+      tape[index]
     end
 
     def right
-      tape.right
+      @index += 1
+      pad if index == tape.size
     end
 
     def write(char)
-      tape.write(char)
+      tape[index] = char
     end
   end
 end

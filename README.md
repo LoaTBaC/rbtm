@@ -11,16 +11,16 @@ The Turing machine requires both a *rule file* and a *tape* to run. The rule fil
 ### Tape
 You can *type* the tape directly in the command line:
 
-$ rbtm  rule.tm  100010
+$ rbtm  rule.tm  **100010**
 
 You may also read a tape from a *file*:
 
-$ rbtm  rule.tm  tape.txt
+$ rbtm  rule.tm  **tape.txt**
 
 #### Saving output
 The output can be saved to a file through normal output redirection:
 
-$ rbtm  rule.tm  100010  >  output.txt
+$ rbtm  rule.tm  100010  **>**  output.txt
 
 This is not recommended to use with verbose mode, due to the formatting.
 

@@ -15,10 +15,10 @@ end
 
 
 print 'States: '
-states = $stdin.gets.split
+states = $stdin.gets.split.uniq
 
 print 'Alphabet: '
-alphabet = $stdin.gets.strip.split(//)
+alphabet = $stdin.gets.strip.split(//).uniq
 alphabet.map! { |c| c[0] }
 
 File.open(file, 'w') do |f|

@@ -1,85 +1,52 @@
 module Rbtm
-  
+
   ##
-  # A tape for a Turing machine.
+  # A tape for the Turing machine.
   class Tape
-    attr_reader :head
-    
-    def initialize(string)
-      @tape = string.to_s.split(//)
-      @tape << ' ' if @tape.empty?
-      reset
+    attr_reader :position, :tape
+
+    def initialize(str = '_')
+      @tape = (str.empty? ? '_' : str.dup)
+      @position = 0
     end
-    
+
     ##
-    # Moves the head left.
+    # Move the tape left.
     def left
-      if @head.zero?
-        @tape.unshift(' ')
+      if position.zero?
+        pad
       else
-        @head -= 1
+        @position -= 1
       end
     end
-    
+
     ##
-    # Operates on the tape one time with the given rule and state.
-    def operate(rule, state)
-      if state == rule.state && read == rule.read
-        write(rule.write)
-        
-        case rule.move
-        when :L
-          left
-        when :R
-          right
-        end
-        
-        rule.next_state
-      end
-    end
-    
-    ##
-    # Returns the value being read at the head's position.
+    # Read a character from the tape.
     def read
-      @tape[@head]
+      tape[position]
     end
-    
+
     ##
-    # Resets the position of the head.
-    def reset
-      @head = start
-    end
-    
-    ##
-    # Moves the head right.
+    # Move the tape right.
     def right
-      @head += 1
-      @tape.push(' ') if @head == @tape.size
+      @position += 1
+      pad if position == tape.size
     end
-    
+
     ##
-    # Returns an unstripped string of the tape.
-    def tape_string
-      @tape.join
+    # Write a character to the tape.
+    def write(char)
+      tape[position] = char
     end
-    
+
     def to_s
-      tape_string.strip
+      tape.sub(/^_+/, '').sub(/_+$/, '')
     end
-    
-    ##
-    # Writes the given value to the head's position.
-    def write(value)
-      @tape[@head] = value.to_s.empty? ? ' ' : value.to_s[0]
-    end
-    
+
     private
-    
-    def start
-      index = 0
-      index += 1 until @tape[index] != ' '
-      
-      @tape[index].nil? ? 0 : index
+
+    def pad
+      tape.insert(position, '_')
     end
   end
 end

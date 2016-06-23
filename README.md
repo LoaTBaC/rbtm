@@ -55,7 +55,7 @@ The Turing machine treats the *blank* (underscore) character in a somewhat speci
 The Turing machine can move **L**, **N**, or **R** (left, right, or none, respectively).
 
 
-This rule format was originally created by the people of [RubyQuiz](rubyquiz.strd6.com).
+This rule format was originally created by the people of [RubyQuiz](http://www.rubyquiz.strd6.com).
 
 ### Examples
 For more example rulesets to use with the Turing machine, see the examples folder. I have also included a very simple script to help generate rule files automatically.

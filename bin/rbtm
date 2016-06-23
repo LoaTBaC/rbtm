@@ -2,53 +2,48 @@
 require 'rbtm'
 
 
-def pretty_display(rule, head)
-  first = ((head.position) / 80) * 80
-  puts "#{' ' * head.position}v"[first...(first+80)]
-  puts head.tape.tape[first...(first+80)]
-  puts
-  puts head.state
-  sleep(SLEEP_TIME)
-  system('clear')
-end
-
-
-unless ARGV.size >= 2
-  puts 'Usage: rbtm <rule> <tape> [-v]'
+def stop(reason)
+  puts reason
   exit
 end
-rule = ARGV[0]
-tape = ARGV[1]
+
+
+begin
+  rule = ARGV.fetch(0)
+  tape = ARGV.fetch(1)
+rescue
+  stop('Usage: rbtm <rule> <tape> [-v]')
+end
+
 VERBOSE = ARGV[2].to_s.include?('v')
 
+stop('Rule file does not exist.') unless File.exists?(rule)
 
-if File.exists?(rule)
-  rule = File.read(rule)
-else
-  puts 'Rule file does not exist.'
-  exit
-end
 if File.exists?(tape)
   tape = File.read(tape).strip
 end
 
-tape = Rbtm::Tape.new(tape)
-rules, state = Rbtm.parse_rules(rule)
+rules, state = Rbtm.parse(rule)
+stop('No valid rules.') if rules.empty?
 head = Rbtm::Head.new(tape, state)
-
-if rules.empty?
-  puts 'No valid rules.'
-  exit
-end
 
 
 if VERBOSE
   print 'Seconds per frame? (default: 0.5) '
   SLEEP_TIME = (num = $stdin.gets.to_f).zero? ? 0.5 : num
+  COLS = `tput cols`.to_i
 
   system('clear')
-  Rbtm.turing_machine(rules, head) { |r, h| pretty_display(r, h) }
+  Rbtm.turing_machine(rules, head) do |h|
+    first = (head.index / COLS) * COLS
+    puts "#{' ' * head.index}v"[first...(first + COLS)]
+    puts head.tape[first...(first + COLS)]
+    puts
+    puts head.state
+    sleep(SLEEP_TIME)
+    system('clear')
+  end
 else
   Rbtm.turing_machine(rules, head)
 end
-puts tape
+puts head

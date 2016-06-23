@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+
+def stop(reason)
+  puts reason
+  exit
+end
+
+
+begin
+  file = ARGV.fetch(0)
+rescue
+  stop('Usage: rbtm_rule <file>')
+end
+
+
+print 'States: '
+states = $stdin.gets.split
+
+print 'Alphabet: '
+alphabet = $stdin.gets.strip.split(//)
+alphabet.map! { |c| c[0] }
+
+File.open(file, 'w') do |f|
+  contents = ''
+
+  states.each do |s|
+    alphabet.each { |c| contents << "#{s}\t#{c}\n" }
+    contents << "\n"
+  end
+
+  f.write(contents)
+end

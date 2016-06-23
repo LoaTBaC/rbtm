@@ -1,48 +1,32 @@
 module Rbtm
+
   ##
-  # Regex for matching rules.
+  # Regexp for matching rules.
   REGEX = /\s*(\w+)\s+(\w)\s+(\w+)\s+(\w)\s+([LNR])/
 
   ##
-  # Generates a string of blank rules from a list of states and symbols.
-  def self.generate(states, symbols)
-    text = ''
-
-    states.each do |s|
-      symbols.each do |c|
-        text << "#{s}\t#{c}\n"
-      end
-      text << "\n"
-    end
-
-    text
-  end
-
-  ##
-  # Returns rules and start state parsed from text.
-  def self.parse_rules(text)
+  # Parses rules and start state from a file.
+  def self.parse(file)
     rules = {}
     state = nil
 
-    text.each_line do |line|
-      next unless (d = Rbtm::REGEX.match(line))
+    File.readlines(file).each do |line|
+      next unless line =~ REGEX
 
-      rule = Rbtm::Rule.new(*d[1, 5])
-      state ||= rule.state
-      rules[rule.signature] = rule
+      state ||= $1
+      rules[[$1, $2]] = [$3, $4, $5]
     end
 
     [rules, state]
   end
 
   ##
-  # Runs a Turing machine. Yields current rule (or nil if no rule) and head if
-  # a block is given.
+  # Runs a Turing machine. Yields current head if given a block.
   def self.turing_machine(rules, head)
     loop do
       rule = rules[head.signature]
 
-      yield rule, head if block_given?
+      yield head if block_given?
       break unless rule
 
       head.operate(rule)
@@ -51,5 +35,3 @@ module Rbtm
 end
 
 require 'rbtm/head'
-require 'rbtm/rule'
-require 'rbtm/tape'

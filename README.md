@@ -2,7 +2,7 @@
 A simple Turing machine gem for Ruby; type "rbtm" in bash to run the executable.
 
 ## Using the Turing machine
-Usage: rbtm <rule_file> <tape> [-v]
+Usage: rbtm rule_file tape [-v]
 ```
     -v              verbose mode (show animation)
 ```

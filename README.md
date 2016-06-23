@@ -8,17 +8,16 @@ Usage: rbtm  rule_file  tape  [-v]
 ```
 The Turing machine requires both a *rule file* and a *tape* to run. The rule file must be in a simple format which will be described below.
 
-##### Typing the tape
+### Tape
 You can *type* the tape directly in the command line:
 
 $ rbtm  rule.tm  100010
 
-##### Using a file
 You may also read a tape from a *file*:
 
 $ rbtm  rule.tm  tape.txt
 
-##### Saving output
+#### Saving output
 The output can be saved to a file through normal output redirection:
 
 $ rbtm  rule.tm  100010  >  output.txt
